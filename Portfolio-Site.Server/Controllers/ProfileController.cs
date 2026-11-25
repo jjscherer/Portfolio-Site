@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Portfolio_Site.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/profile")]
     public class ProfileController : ControllerBase
     {
         private string name = "John Joseph Scherer";
