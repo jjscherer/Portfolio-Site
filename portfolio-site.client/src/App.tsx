@@ -3,22 +3,45 @@ import './App.css';
 
 interface Profile {
     name: string;
-    bio: number;
+    bio: string;
 }
 
 function App() {
 
-    const [profile, setProfile] = useState<Profile>();
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        populateProfileData();
-    });
+        async function populateProfileData() {
+            try {
+                const response = await fetch('/api/profile');
+                if (response.ok) {
+                    const data: Profile = await response.json();
+                    setProfile(data);
+                } else {
+                    setError(`Request failed (${response.status})`);
+                }
+            } catch (err) {
+                console.error(err);
 
-    const contents = profile === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+                if (err instanceof Error) {
+                    setError(`Couldn't reach the server: ${err.message}`);
+                } else {
+                    setError("Couldn't reach the server. Please try again later.");
+                }
+            }
+        }
+
+        populateProfileData();
+    }, []);
+
+    const contents = error !== null 
+        ? <p><em>{error}</em></p>
+        : profile === null
+        ? <p><em>Loading...</em></p>
         : <div>
             <h1>{profile.name}</h1>
-            <h3>{profile.bio}</h3>
+            <p>{profile.bio}</p>
         </div>;
 
     return (
@@ -26,15 +49,6 @@ function App() {
             { contents }
         </div>
     );
-
-    async function populateProfileData(){
-
-        const response = await fetch('Profile');
-        if (response.ok){
-            const data = await response.json();
-            setProfile(data);
-        }
-    }
 }
 
 export default App;

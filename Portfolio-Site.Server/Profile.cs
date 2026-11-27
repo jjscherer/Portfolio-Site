@@ -2,7 +2,7 @@
 {
     public class Profile
     {
-        public string? Name { get; set; }
-        public string? Bio { get; set; }
+        public required string Name { get; set; }
+        public required string Bio { get; set; }
     }
 }
